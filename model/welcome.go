@@ -1,16 +1,33 @@
 package model
 
 import (
+	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
+var (
+	configListItems = []list.Item{
+		item{title: "Single player ☝️", desc: "Single Player"},
+		item{title: "2 players (local) ✌️", desc: "Local Multiplayer"},
+	}
+)
+
 // Welcome displays the welcome page.
-type Welcome struct{}
+type Welcome struct {
+	gameConfig list.Model
+}
 
 // Init is the first function that will be called. It returns an optional
 // initial command. To not perform an initial command return nil.
 func (m *Welcome) Init() (c tea.Cmd) {
+	m.gameConfig = list.New(
+		configListItems,
+		list.NewDefaultDelegate(),
+		0,
+		0,
+	)
+
 	return nil
 }
 
@@ -23,14 +40,19 @@ func (m *Welcome) Update(msg tea.Msg) (model tea.Model, c tea.Cmd) {
 // View renders the program's UI, which is just a string. The view is
 // rendered after every Update.
 func (m *Welcome) View() string {
-	style := lipgloss.NewStyle().
-		Background(lipgloss.Color("#282a2b")).
-		Padding(1, 2)
+	welcomeTextStyle := lipgloss.NewStyle().
+		Bold(true).
+		Foreground(lipgloss.Color("#FFF")).
+		Background(lipgloss.Color("#7D56F4")).
+		Padding(1, 4)
+		// MarginBottom(1)
 
-	text := `Welcome to the game of
-Rock-Paper-Scissors!`
-
-	return style.Render(text)
+	// Sets up horizontal layout ("split view")
+	return lipgloss.JoinHorizontal(
+		lipgloss.Top,
+		welcomeTextStyle.Render("Rock-Paper-Scissors Game"),
+		focusedStyle.Render(m.gameConfig.View()),
+	)
 }
 
 // Build-time interface check

@@ -1,9 +1,24 @@
 package model
 
 import (
-	"fmt"
-
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
+)
+
+var (
+	globalStyle = lipgloss.NewStyle().Margin(1, 2)
+
+	// The style for the active (focused) list
+	focusedStyle = lipgloss.NewStyle().
+			Padding(1, 2).
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("#7D5fff6F4"))
+
+	// The style for the inactive list
+	noFocusStyle = lipgloss.NewStyle().
+			Padding(1, 2).
+			Border(lipgloss.HiddenBorder()).
+			BorderForeground(lipgloss.Color("#adadad"))
 )
 
 // Main controls the app state.
@@ -11,6 +26,7 @@ type Main struct {
 	ActiveModel tea.Model
 	HelpModel   tea.Model
 	GameModel   tea.Model
+	quitting    bool
 }
 
 // Init is the first function that will be called. It returns an optional
@@ -30,7 +46,10 @@ func (m *Main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if msg.String() == "ctrl+c" {
+		switch msg.String() {
+		// Global quit
+		case "ctrl+c", "q":
+			m.quitting = true
 			return m, tea.Quit
 		}
 	}
@@ -47,9 +66,11 @@ func (m *Main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // View renders the program's UI, which is just a string. The view is
 // rendered after every Update.
 func (m *Main) View() string {
-	return fmt.Sprintf(
-		"%s%s",
-		m.ActiveModel.View(),
-		m.HelpModel.View(),
+	return globalStyle.Render(
+		lipgloss.JoinVertical(
+			lipgloss.Top,
+			m.ActiveModel.View(),
+			m.HelpModel.View(),
+		),
 	)
 }

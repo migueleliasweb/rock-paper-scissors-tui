@@ -28,6 +28,7 @@ func (m *Help) Init() tea.Cmd {
 func (m *Help) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
+		// TODO[Miguel]: Fix test rendering
 		if key.Matches(msg, keyMapBindings.ShortHelp()...) {
 			m.Model.ShowAll = !m.Model.ShowAll
 		}
