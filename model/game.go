@@ -78,7 +78,7 @@ func (m Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 
-		// Resize each panel to fit half the screen each
+		// Resize each view to fit half the screen each
 		halfWidth := m.width/2 - 4
 		m.leftModel.SetWidth(halfWidth)
 		m.leftModel.SetHeight(m.height - 4)
