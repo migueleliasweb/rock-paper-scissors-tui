@@ -8,7 +8,7 @@ import (
 
 var (
 	gameListItems = []list.Item{
-		item{title: "Rock ✊", desc: "Rock beats Sissors"},
+		item{title: "Rock ✊", desc: "Rock blunts Sissors"},
 		item{title: "Paper 🤚", desc: "Paper wraps Rock"},
 		item{title: "Scissors ✌️", desc: "Scissors cuts Paper"},
 	}
@@ -81,10 +81,10 @@ func (m Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Resize each view to fit half the screen each
 		halfWidth := m.width/2 - 4
 		m.leftModel.SetWidth(halfWidth)
-		m.leftModel.SetHeight(m.height - 4)
+		m.leftModel.SetHeight(m.height / 2)
 
 		m.rightModel.SetWidth(halfWidth)
-		m.rightModel.SetHeight(m.height - 4)
+		m.rightModel.SetHeight(m.height / 2)
 	}
 
 	// Update the focused list only

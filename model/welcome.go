@@ -8,15 +8,16 @@ import (
 
 var (
 	configListItems = []list.Item{
-		item{title: "Single player ☝️", desc: "Single Player"},
-		item{title: "2 players (local) ✌️", desc: "Local Multiplayer"},
+		item{title: "Single player", desc: "Player vs NPC"},
+		item{title: "Multiplayer (local)", desc: "Local Multiplayer (soon)"},
 		item{title: "Quit 👋", desc: "Quit"},
 	}
 )
 
 // Welcome displays the welcome page.
 type Welcome struct {
-	gameConfig list.Model
+	gameConfig       list.Model
+	selectedGameMode list.Item
 }
 
 // Init is the first function that will be called. It returns an optional
@@ -42,7 +43,13 @@ func (m *Welcome) Init() (c tea.Cmd) {
 func (m *Welcome) Update(msg tea.Msg) (model tea.Model, c tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		// Handle list selections
+		switch keypress := msg.String(); keypress {
+		case "enter":
+			selectedItem, ok := m.gameConfig.SelectedItem().(item)
+			if ok {
+				m.selectedGameMode = selectedItem
+			}
+		}
 
 	case tea.WindowSizeMsg:
 		halfWidth := msg.Width/2 - 4
