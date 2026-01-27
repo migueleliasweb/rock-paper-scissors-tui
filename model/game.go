@@ -13,7 +13,13 @@ var (
 	gameSelectionPaperItem   = bubble.SimpleItem{TitleItem: "Paper ✋", DescItem: "Paper covers Rock"}
 	gameSelectionScissorItem = bubble.SimpleItem{TitleItem: "Scissors ✌️", DescItem: "Scissors cuts Paper"}
 
-	gameListItems = []list.Item{
+	player1ListItems = []list.Item{
+		gameSelectionRockItem,
+		gameSelectionPaperItem,
+		gameSelectionScissorItem,
+	}
+
+	player2ListItems = []list.Item{
 		gameSelectionRockItem,
 		gameSelectionPaperItem,
 		gameSelectionScissorItem,
@@ -35,7 +41,6 @@ type ModelWithModelAndRounds interface {
 
 // Game holds the application state for the game
 type Game struct {
-	config      list.Model
 	leftModel   list.Model
 	centerModel list.Model
 	rightModel  *Scoreboard
@@ -72,7 +77,7 @@ func (m *Game) SetGameRounds(item list.Item) {
 // initial command. To not perform an initial command return nil.
 func (m *Game) Init() tea.Cmd {
 	m.leftModel = list.New(
-		gameListItems,
+		player1ListItems,
 		list.NewDefaultDelegate(),
 		0,
 		0,
@@ -84,7 +89,7 @@ func (m *Game) Init() tea.Cmd {
 	m.leftModel.DisableQuitKeybindings()
 
 	m.centerModel = list.New(
-		gameListItems,
+		player2ListItems,
 		list.NewDefaultDelegate(),
 		0,
 		0,
@@ -140,7 +145,6 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // View renders the program's UI, which is just a string. The view is
 // rendered after every Update.
 func (m *Game) View() string {
-
 	leftView := focusedStyle.Render(m.leftModel.View())
 	centerView := noFocusStyle.Render(m.centerModel.View())
 	rightView := noFocusStyle.Render(m.rightModel.View())

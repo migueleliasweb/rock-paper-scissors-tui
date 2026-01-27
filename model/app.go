@@ -16,13 +16,13 @@ var (
 				Background(lipgloss.Color("#7D56F4")).
 				Padding(1, 2)
 
-	// The style for the active (focused) list
+	// The style for active (focused) lists
 	focusedStyle = lipgloss.NewStyle().
 			Padding(1, 2).
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(lipgloss.Color("#7D5fff6F4"))
 
-	// The style for the inactive list
+	// The style for inactive lists
 	noFocusStyle = lipgloss.NewStyle().
 			Padding(1, 2).
 			Border(lipgloss.HiddenBorder()).
