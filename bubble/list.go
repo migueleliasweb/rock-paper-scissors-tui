@@ -29,6 +29,21 @@ func (i ItemWithDeactivation) FilterValue() string {
 
 var _ list.Item = &ItemWithDeactivation{}
 
+// SimpleItem implements the list.Item interface
+type SimpleItem struct {
+	// Title Item Item's tittle
+	TitleItem string
+
+	// Desc Item Item's description
+	DescItem string
+}
+
+func (i SimpleItem) Title() string       { return i.TitleItem }
+func (i SimpleItem) Description() string { return i.DescItem }
+func (i SimpleItem) FilterValue() string { return i.TitleItem }
+
+var _ list.Item = &SimpleItem{}
+
 // func newItemDelegate() list.DefaultDelegate {
 // 	d := list.NewDefaultDelegate()
 

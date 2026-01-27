@@ -1,15 +1,17 @@
 package model
 
 import (
+	"rock-paper-scissors/bubble"
+
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
 var (
-	gameSelectionRockItem    = simpleItem{title: "Rock ✊", desc: "Rock blunts Sissors"}
-	gameSelectionPaperItem   = simpleItem{title: "Rock ✊", desc: "Rock blunts Sissors"}
-	gameSelectionScissorItem = simpleItem{title: "Rock ✊", desc: "Rock blunts Sissors"}
+	gameSelectionRockItem    = bubble.SimpleItem{TitleItem: "Rock ✊", DescItem: "Rock blunts Sissors"}
+	gameSelectionPaperItem   = bubble.SimpleItem{TitleItem: "Rock ✊", DescItem: "Rock blunts Sissors"}
+	gameSelectionScissorItem = bubble.SimpleItem{TitleItem: "Rock ✊", DescItem: "Rock blunts Sissors"}
 
 	gameListItems = []list.Item{
 		gameSelectionRockItem,
@@ -17,16 +19,6 @@ var (
 		gameSelectionScissorItem,
 	}
 )
-
-// simpleItem implements the list.Item interface
-type simpleItem struct {
-	title string
-	desc  string
-}
-
-func (i simpleItem) Title() string       { return i.title }
-func (i simpleItem) Description() string { return i.desc }
-func (i simpleItem) FilterValue() string { return i.title }
 
 // focusedState tracks which list is currently active
 type focusedState int
@@ -44,7 +36,9 @@ type Game struct {
 	focus      focusedState
 	width      int
 	height     int
-	gameMode   string
+
+	GameMode   list.Item
+	GameRounds list.Item
 }
 
 // Init is the first function that will be called. It returns an optional

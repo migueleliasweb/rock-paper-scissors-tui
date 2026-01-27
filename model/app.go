@@ -57,13 +57,10 @@ func (m *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	m.ActiveModel, cmd = m.ActiveModel.Update(msg)
-	cmds = append(cmds, cmd)
-
 	// Check if whether we just selected a game mode
 	if welcome, ok := m.ActiveModel.(*Welcome); ok && welcome.SelectedGameMode != nil && welcome.SelectedGameRounds != nil {
 		selectedGameMode, okGameMode := welcome.SelectedGameMode.(bubble.ItemWithDeactivation)
-		selectedGameRounds, okGameRounds := welcome.SelectedGameRounds.(bubble.ItemWithDeactivation)
+		selectedGameRounds, okGameRounds := welcome.SelectedGameRounds.(bubble.SimpleItem)
 
 		if okGameMode && okGameRounds {
 			// Build Game Model with the selected options
@@ -76,6 +73,9 @@ func (m *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// welcome.SelectedGameMode = nil
 		}
 	}
+
+	m.ActiveModel, cmd = m.ActiveModel.Update(msg)
+	cmds = append(cmds, cmd)
 
 	m.HelpModel, cmd = m.HelpModel.Update(msg)
 	cmds = append(cmds, cmd)

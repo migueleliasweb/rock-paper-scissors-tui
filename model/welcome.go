@@ -31,9 +31,9 @@ var (
 		gameModeMultiplayer,
 	}
 
-	gameRoundsOne   = simpleItem{title: "Best of one", desc: "Single round"}
-	gameRoundsTwo   = simpleItem{title: "Best of two", desc: "Two rounds"}
-	gameRoundsThree = simpleItem{title: "Best of three", desc: "Three rounds"}
+	gameRoundsOne   = bubble.SimpleItem{TitleItem: "Best of one", DescItem: "Single round"}
+	gameRoundsTwo   = bubble.SimpleItem{TitleItem: "Best of two", DescItem: "Two rounds"}
+	gameRoundsThree = bubble.SimpleItem{TitleItem: "Best of three", DescItem: "Three rounds"}
 
 	gameRoundsListItems = []list.Item{
 		gameRoundsOne,
