@@ -44,12 +44,13 @@ var (
 
 // Welcome displays the welcome page.
 type Welcome struct {
-	gameModeListModel list.Model
-	selectedGameMode  list.Item
+	SelectedGameMode   list.Item
+	SelectedGameRounds list.Item
 
+	gameModeListModel   list.Model
 	gameRoundsListModel list.Model
-	selectedGameRounds  list.Item
-	focusedIndex        int
+
+	focusedIndex int
 }
 
 // Init is the first function that will be called. It returns an optional
@@ -93,15 +94,17 @@ func (m *Welcome) Update(msg tea.Msg) (model tea.Model, c tea.Cmd) {
 		switch keypress := msg.String(); keypress {
 		case "enter":
 			if m.focusedIndex == 2 {
-				m.selectedGameMode = m.gameModeListModel.SelectedItem()
-				m.selectedGameRounds = m.gameRoundsListModel.SelectedItem()
+				m.SelectedGameMode = m.gameModeListModel.SelectedItem()
+				m.SelectedGameRounds = m.gameRoundsListModel.SelectedItem()
 			}
+
 		case "tab":
 			m.focusedIndex++
 
 			if m.focusedIndex > 2 {
 				m.focusedIndex = 0
 			}
+
 		case "shift+tab":
 			m.focusedIndex--
 

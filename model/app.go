@@ -3,6 +3,7 @@ package model
 import (
 	"rock-paper-scissors/bubble"
 
+	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -25,10 +26,10 @@ var (
 
 // App controls the app state.
 type App struct {
-	ActiveModel tea.Model
-	HelpModel   tea.Model
-	GameModel   tea.Model
-	quitting    bool
+	ActiveModel      tea.Model
+	HelpModel        tea.Model
+	GameModelBuilder func(gameMode list.Item, gameRounds list.Item) tea.Model
+	quitting         bool
 }
 
 // Init is the first function that will be called. It returns an optional
@@ -59,30 +60,21 @@ func (m *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.ActiveModel, cmd = m.ActiveModel.Update(msg)
 	cmds = append(cmds, cmd)
 
-	switch m.ActiveModel.(type) {
-	case *Welcome:
-
-	default:
-		// something is off
-	}
-
 	// Check if whether we just selected a game mode
-	if welcome, ok := m.ActiveModel.(*Welcome); ok && welcome.selectedGameMode != nil {
-		if selected, ok := welcome.selectedGameMode.(bubble.ItemWithDeactivation); ok {
-			// Prevent selecting disabled items
-			if selected.Disabled {
-				welcome.selectedGameMode = nil
-				return m, nil
-			}
+	if welcome, ok := m.ActiveModel.(*Welcome); ok && welcome.SelectedGameMode != nil && welcome.SelectedGameRounds != nil {
+		selectedGameMode, okGameMode := welcome.SelectedGameMode.(bubble.ItemWithDeactivation)
+		selectedGameRounds, okGameRounds := welcome.SelectedGameRounds.(bubble.ItemWithDeactivation)
 
-			// Configure and switch to the Game model
-			if game, ok := m.GameModel.(*Game); ok {
-				game.gameMode = selected.Title()
-			}
-			m.ActiveModel = m.GameModel
+		if okGameMode && okGameRounds {
+			// Build Game Model with the selected options
+			m.ActiveModel = m.GameModelBuilder(
+				selectedGameMode,
+				selectedGameRounds,
+			)
+
+			// Reset the selection so it doesn't trigger again if we return
+			// welcome.SelectedGameMode = nil
 		}
-		// Reset the selection so it doesn't trigger again if we return
-		welcome.selectedGameMode = nil
 	}
 
 	m.HelpModel, cmd = m.HelpModel.Update(msg)
