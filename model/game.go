@@ -87,6 +87,7 @@ func (m *Game) Init() tea.Cmd {
 	m.leftModel.SetShowPagination(false)
 	m.leftModel.SetShowStatusBar(false)
 	m.leftModel.DisableQuitKeybindings()
+	m.leftModel.Title = "Player 1"
 
 	m.centerModel = list.New(
 		player2ListItems,
@@ -99,6 +100,7 @@ func (m *Game) Init() tea.Cmd {
 	m.centerModel.SetShowPagination(false)
 	m.centerModel.SetShowStatusBar(false)
 	m.centerModel.DisableQuitKeybindings()
+	m.centerModel.Title = "NPC"
 
 	m.rightModel = &Scoreboard{}
 
