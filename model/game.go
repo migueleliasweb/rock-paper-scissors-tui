@@ -127,25 +127,16 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // View renders the program's UI, which is just a string. The view is
 // rendered after every Update.
 func (m *Game) View() string {
-	var leftView string
 
-	if m.focus == focusLeft {
-		leftView = focusedStyle.Render(m.leftModel.View())
-	} else {
-		leftView = noFocusStyle.Render(m.leftModel.View())
-	}
-
-	var rightView string
-	if m.focus == focusRight {
-		rightView = focusedStyle.Render(m.centerModel.View())
-	} else {
-		rightView = noFocusStyle.Render(m.centerModel.View())
-	}
+	leftView := focusedStyle.Render(m.leftModel.View())
+	centerView := noFocusStyle.Render(m.centerModel.View())
+	rightView := noFocusStyle.Render(m.centerModel.View())
 
 	// Sets up horizontal layout ("split view")
 	return lipgloss.JoinHorizontal(
 		lipgloss.Top,
 		leftView,
+		centerView,
 		rightView,
 	)
 }
