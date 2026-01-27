@@ -82,6 +82,8 @@ func (m *Game) Init() tea.Cmd {
 	m.centerModel.SetShowStatusBar(false)
 	m.centerModel.DisableQuitKeybindings()
 
+	m.rightModel = &Scoreboard{}
+
 	m.focus = focusLeft
 
 	return nil
