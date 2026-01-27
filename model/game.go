@@ -1,9 +1,11 @@
 package model
 
 import (
+	"fmt"
 	"rock-paper-scissors/bubble"
 
 	"github.com/charmbracelet/bubbles/list"
+	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -42,7 +44,7 @@ type ModelWithModelAndRounds interface {
 // Game holds the application state for the game
 type Game struct {
 	leftModel   list.Model
-	centerModel list.Model
+	centerModel spinner.Model
 	rightModel  *Scoreboard
 	focus       focusedState
 	width       int
@@ -89,24 +91,15 @@ func (m *Game) Init() tea.Cmd {
 	m.leftModel.DisableQuitKeybindings()
 	m.leftModel.Title = "Player 1"
 
-	m.centerModel = list.New(
-		player2ListItems,
-		list.NewDefaultDelegate(),
-		0,
-		0,
-	)
-
-	m.centerModel.SetFilteringEnabled(false)
-	m.centerModel.SetShowPagination(false)
-	m.centerModel.SetShowStatusBar(false)
-	m.centerModel.DisableQuitKeybindings()
-	m.centerModel.Title = "NPC"
+	m.centerModel = spinner.New()
+	m.centerModel.Spinner = spinner.Dot
+	m.centerModel.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
 
 	m.rightModel = &Scoreboard{}
 
 	m.focus = focusLeft
 
-	return nil
+	return m.centerModel.Tick
 }
 
 // Update is called when a message is received. Use it to inspect messages
@@ -127,19 +120,17 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		thirdWidth := m.width/3 - 4
 		m.leftModel.SetWidth(thirdWidth)
 		m.leftModel.SetHeight(m.height / 2)
-
-		m.centerModel.SetWidth(thirdWidth)
-		m.centerModel.SetHeight(m.height / 2)
 	}
 
 	// Update the focused list only
 	m.leftModel, cmd = m.leftModel.Update(msg)
 	if m.focus == focusLeft {
 		cmds = append(cmds, cmd)
-	} else {
-		m.centerModel, cmd = m.centerModel.Update(msg)
-		cmds = append(cmds, cmd)
 	}
+
+	var spinnerCmd tea.Cmd
+	m.centerModel, spinnerCmd = m.centerModel.Update(msg)
+	cmds = append(cmds, spinnerCmd)
 
 	return m, tea.Batch(cmds...)
 }
@@ -148,7 +139,19 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // rendered after every Update.
 func (m *Game) View() string {
 	leftView := focusedStyle.Render(m.leftModel.View())
-	centerView := noFocusStyle.Render(m.centerModel.View())
+
+	thirdWidth := m.width/3 - 4
+	halfHeight := m.height / 2
+
+	centerContent := fmt.Sprintf(
+		"%s\n\n%s",
+		m.centerModel.View(),
+		lipgloss.NewStyle().Blink(true).Render("Thinking"),
+	)
+
+	centerBox := lipgloss.NewStyle().Width(thirdWidth).Height(halfHeight).Align(lipgloss.Center, lipgloss.Center).Render(centerContent)
+
+	centerView := noFocusStyle.Render(centerBox)
 	rightView := noFocusStyle.Render(m.rightModel.View())
 
 	// Sets up horizontal layout ("split view")

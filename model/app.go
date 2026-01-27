@@ -83,6 +83,9 @@ func (m *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		selectedGameRounds, okGameRounds := welcome.SelectedGameRounds.(bubble.SimpleItem)
 
 		if okGameMode && okGameRounds {
+			// Initialize the game model to reset state and start the spinner
+			cmds = append(cmds, m.GameModel.Init())
+
 			// Configure Game Model with the selected options after checking interface
 			switch gameModel := m.GameModel.(type) {
 			case ModelWithModelAndRounds:
