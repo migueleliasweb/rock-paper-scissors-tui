@@ -38,6 +38,9 @@ type App struct {
 	HelpModel    tea.Model
 
 	quitting bool
+
+	windowWidth  int
+	windowHeight int
 }
 
 // Init is the first function that will be called. It returns an optional
@@ -69,6 +72,9 @@ func (m *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.quitting = true
 			return m, tea.Quit
 		}
+	case tea.WindowSizeMsg:
+		m.windowWidth = msg.Width
+		m.windowHeight = msg.Height
 	}
 
 	// Check if whether we just selected a game mode
@@ -84,6 +90,14 @@ func (m *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				gameModel.SetGameRounds(selectedGameRounds)
 			default:
 			}
+
+			// Resize the game model to the current window size
+			var resizeCmd tea.Cmd
+			m.GameModel, resizeCmd = m.GameModel.Update(tea.WindowSizeMsg{
+				Width:  m.windowWidth,
+				Height: m.windowHeight,
+			})
+			cmds = append(cmds, resizeCmd)
 
 			// Reset the selection so it doesn't trigger again if we return
 			welcome.SelectedGameMode = nil
