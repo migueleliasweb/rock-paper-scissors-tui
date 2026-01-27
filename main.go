@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	p := tea.NewProgram(&model.Main{
+	p := tea.NewProgram(&model.App{
 		ActiveModel: &model.Welcome{},
 		HelpModel:   &model.Help{},
 	})
