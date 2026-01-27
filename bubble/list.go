@@ -1,24 +1,33 @@
 package bubble
 
+import "github.com/charmbracelet/bubbles/list"
+
 // ItemWithDeactivation Auguments the functionality from the upstream list bubble
 // by adding the ability to handle deactivated items.
 type ItemWithDeactivation struct {
-	title    string
-	desc     string
-	disabled bool // Whether the item is deactivated
+	// TitleItem Item's tittle
+	TitleItem string
+
+	// DescItem Item's description
+	DescItem string
+
+	// Disabled Whether the item should be renderer as `deactivated`
+	Disabled bool
 }
 
 func (i ItemWithDeactivation) Title() string {
-	return i.title
+	return i.TitleItem
 }
 
 func (i ItemWithDeactivation) Description() string {
-	return i.desc
+	return i.DescItem
 }
 
 func (i ItemWithDeactivation) FilterValue() string {
-	return i.title
+	return i.TitleItem
 }
+
+var _ list.Item = &ItemWithDeactivation{}
 
 // func newItemDelegate() list.DefaultDelegate {
 // 	d := list.NewDefaultDelegate()

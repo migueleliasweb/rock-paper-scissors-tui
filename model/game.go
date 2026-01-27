@@ -7,22 +7,26 @@ import (
 )
 
 var (
+	gameSelectionRockItem    = simpleItem{title: "Rock ✊", desc: "Rock blunts Sissors"}
+	gameSelectionPaperItem   = simpleItem{title: "Rock ✊", desc: "Rock blunts Sissors"}
+	gameSelectionScissorItem = simpleItem{title: "Rock ✊", desc: "Rock blunts Sissors"}
+
 	gameListItems = []list.Item{
-		item{title: "Rock ✊", desc: "Rock blunts Sissors"},
-		item{title: "Paper 🤚", desc: "Paper wraps Rock"},
-		item{title: "Scissors ✌️", desc: "Scissors cuts Paper"},
+		gameSelectionRockItem,
+		gameSelectionPaperItem,
+		gameSelectionScissorItem,
 	}
 )
 
-// item implements the list.Item interface
-type item struct {
+// simpleItem implements the list.Item interface
+type simpleItem struct {
 	title string
 	desc  string
 }
 
-func (i item) Title() string       { return i.title }
-func (i item) Description() string { return i.desc }
-func (i item) FilterValue() string { return i.title }
+func (i simpleItem) Title() string       { return i.title }
+func (i simpleItem) Description() string { return i.desc }
+func (i simpleItem) FilterValue() string { return i.title }
 
 // focusedState tracks which list is currently active
 type focusedState int
@@ -40,6 +44,7 @@ type Game struct {
 	focus      focusedState
 	width      int
 	height     int
+	gameMode   string
 }
 
 // Init is the first function that will be called. It returns an optional
