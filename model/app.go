@@ -3,7 +3,6 @@ package model
 import (
 	"rock-paper-scissors/bubble"
 
-	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -26,17 +25,26 @@ var (
 
 // App controls the app state.
 type App struct {
-	ActiveModel      tea.Model
-	HelpModel        tea.Model
-	GameModelBuilder func(gameMode list.Item, gameRounds list.Item) tea.Model
-	quitting         bool
+	activeModel tea.Model
+
+	WelcomeModel tea.Model
+	GameModel    tea.Model
+	HelpModel    tea.Model
+
+	quitting bool
 }
 
 // Init is the first function that will be called. It returns an optional
 // initial command. To not perform an initial command return nil.
 func (m *App) Init() tea.Cmd {
+	if m.activeModel == nil {
+		// Set initial state for the active model
+		m.activeModel = m.WelcomeModel
+	}
+
 	return tea.Batch(
-		m.ActiveModel.Init(),
+		m.WelcomeModel.Init(),
+		m.GameModel.Init(),
 		m.HelpModel.Init(),
 	)
 }
@@ -58,23 +66,29 @@ func (m *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	// Check if whether we just selected a game mode
-	if welcome, ok := m.ActiveModel.(*Welcome); ok && welcome.SelectedGameMode != nil && welcome.SelectedGameRounds != nil {
+	if welcome, ok := m.activeModel.(*Welcome); ok && welcome.SelectedGameMode != nil && welcome.SelectedGameRounds != nil {
 		selectedGameMode, okGameMode := welcome.SelectedGameMode.(bubble.ItemWithDeactivation)
 		selectedGameRounds, okGameRounds := welcome.SelectedGameRounds.(bubble.SimpleItem)
 
 		if okGameMode && okGameRounds {
-			// Build Game Model with the selected options
-			m.ActiveModel = m.GameModelBuilder(
-				selectedGameMode,
-				selectedGameRounds,
-			)
+			// Configure Game Model with the selected options after checking interface
+			switch gameModel := m.GameModel.(type) {
+			case ModelWithModelAndRounds:
+				gameModel.SetGameMode(selectedGameMode)
+				gameModel.SetGameRounds(selectedGameRounds)
+			default:
+			}
 
 			// Reset the selection so it doesn't trigger again if we return
-			// welcome.SelectedGameMode = nil
+			welcome.SelectedGameMode = nil
+			welcome.SelectedGameRounds = nil
+
+			// Update active model
+			m.activeModel = m.GameModel
 		}
 	}
 
-	m.ActiveModel, cmd = m.ActiveModel.Update(msg)
+	m.activeModel, cmd = m.activeModel.Update(msg)
 	cmds = append(cmds, cmd)
 
 	m.HelpModel, cmd = m.HelpModel.Update(msg)
@@ -89,8 +103,10 @@ func (m *App) View() string {
 	return globalStyle.Render(
 		lipgloss.JoinVertical(
 			lipgloss.Top,
-			m.ActiveModel.View(),
+			m.activeModel.View(),
 			m.HelpModel.View(),
 		),
 	)
 }
+
+var _ tea.Model = &App{}

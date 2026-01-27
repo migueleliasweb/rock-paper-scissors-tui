@@ -28,6 +28,11 @@ const (
 	focusRight
 )
 
+type ModelWithModelAndRounds interface {
+	SetGameMode(item list.Item)
+	SetGameRounds(item list.Item)
+}
+
 // Game holds the application state for the game
 type Game struct {
 	config     list.Model
@@ -37,19 +42,32 @@ type Game struct {
 	width      int
 	height     int
 
-	GameMode   list.Item
-	GameRounds list.Item
+	gameMode   list.Item
+	gameRounds list.Item
+}
+
+func (m *Game) SetGameMode(item list.Item) {
+	m.gameMode = item
+}
+
+func (m *Game) SetGameRounds(item list.Item) {
+	m.gameRounds = item
 }
 
 // Init is the first function that will be called. It returns an optional
 // initial command. To not perform an initial command return nil.
-func (m Game) Init() tea.Cmd {
+func (m *Game) Init() tea.Cmd {
 	m.leftModel = list.New(
 		gameListItems,
 		list.NewDefaultDelegate(),
 		0,
 		0,
 	)
+
+	m.leftModel.SetFilteringEnabled(false)
+	m.leftModel.SetShowPagination(false)
+	m.leftModel.SetShowStatusBar(false)
+	m.leftModel.DisableQuitKeybindings()
 
 	m.rightModel = list.New(
 		gameListItems,
@@ -58,6 +76,11 @@ func (m Game) Init() tea.Cmd {
 		0,
 	)
 
+	m.rightModel.SetFilteringEnabled(false)
+	m.rightModel.SetShowPagination(false)
+	m.rightModel.SetShowStatusBar(false)
+	m.rightModel.DisableQuitKeybindings()
+
 	m.focus = focusLeft
 
 	return nil
@@ -65,7 +88,7 @@ func (m Game) Init() tea.Cmd {
 
 // Update is called when a message is received. Use it to inspect messages
 // and, in response, update the model and/or send a command.
-func (m Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	var cmds []tea.Cmd
 
@@ -100,7 +123,7 @@ func (m Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // View renders the program's UI, which is just a string. The view is
 // rendered after every Update.
-func (m Game) View() string {
+func (m *Game) View() string {
 	var leftView string
 
 	if m.focus == focusLeft {
@@ -126,3 +149,4 @@ func (m Game) View() string {
 
 // Build-time interface check
 var _ tea.Model = &Game{}
+var _ ModelWithModelAndRounds = &Game{}
