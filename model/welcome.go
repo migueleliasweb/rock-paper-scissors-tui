@@ -135,12 +135,6 @@ func (m *Welcome) Update(msg tea.Msg) (model tea.Model, c tea.Cmd) {
 // View renders the program's UI, which is just a string. The view is
 // rendered after every Update.
 func (m *Welcome) View() string {
-	welcomeTextStyle := lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("#FFF")).
-		Background(lipgloss.Color("#7D56F4")).
-		Padding(1, 4)
-
 	startGameStyle := lipgloss.NewStyle().
 		Padding(1, 2).
 		Border(lipgloss.RoundedBorder()).
@@ -163,9 +157,13 @@ func (m *Welcome) View() string {
 	}
 
 	// Sets up horizontal layout ("split view")
-	return lipgloss.JoinVertical(lipgloss.Center,
-		welcomeTextStyle.Render("Rock-Paper-Scissors Game"),
-		lipgloss.JoinHorizontal(lipgloss.Top, modeView, roundsView),
+	return lipgloss.JoinVertical(
+		lipgloss.Center,
+		lipgloss.JoinHorizontal(
+			lipgloss.Top,
+			modeView,
+			roundsView,
+		),
 		startGameButtomView,
 	)
 }

@@ -35,12 +35,13 @@ type ModelWithModelAndRounds interface {
 
 // Game holds the application state for the game
 type Game struct {
-	config     list.Model
-	leftModel  list.Model
-	rightModel list.Model
-	focus      focusedState
-	width      int
-	height     int
+	config      list.Model
+	leftModel   list.Model
+	centerModel list.Model
+	rightModel  tea.Model
+	focus       focusedState
+	width       int
+	height      int
 
 	gameMode   list.Item
 	gameRounds list.Item
@@ -69,17 +70,17 @@ func (m *Game) Init() tea.Cmd {
 	m.leftModel.SetShowStatusBar(false)
 	m.leftModel.DisableQuitKeybindings()
 
-	m.rightModel = list.New(
+	m.centerModel = list.New(
 		gameListItems,
 		list.NewDefaultDelegate(),
 		0,
 		0,
 	)
 
-	m.rightModel.SetFilteringEnabled(false)
-	m.rightModel.SetShowPagination(false)
-	m.rightModel.SetShowStatusBar(false)
-	m.rightModel.DisableQuitKeybindings()
+	m.centerModel.SetFilteringEnabled(false)
+	m.centerModel.SetShowPagination(false)
+	m.centerModel.SetShowStatusBar(false)
+	m.centerModel.DisableQuitKeybindings()
 
 	m.focus = focusLeft
 
@@ -94,7 +95,7 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		// Handle list selections
+		// Handle list.Model selections
 
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
@@ -105,8 +106,8 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.leftModel.SetWidth(halfWidth)
 		m.leftModel.SetHeight(m.height / 2)
 
-		m.rightModel.SetWidth(halfWidth)
-		m.rightModel.SetHeight(m.height / 2)
+		m.centerModel.SetWidth(halfWidth)
+		m.centerModel.SetHeight(m.height / 2)
 	}
 
 	// Update the focused list only
@@ -114,7 +115,7 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	if m.focus == focusLeft {
 		cmds = append(cmds, cmd)
 	} else {
-		m.rightModel, cmd = m.rightModel.Update(msg)
+		m.centerModel, cmd = m.centerModel.Update(msg)
 		cmds = append(cmds, cmd)
 	}
 
@@ -134,9 +135,9 @@ func (m *Game) View() string {
 
 	var rightView string
 	if m.focus == focusRight {
-		rightView = focusedStyle.Render(m.rightModel.View())
+		rightView = focusedStyle.Render(m.centerModel.View())
 	} else {
-		rightView = noFocusStyle.Render(m.rightModel.View())
+		rightView = noFocusStyle.Render(m.centerModel.View())
 	}
 
 	// Sets up horizontal layout ("split view")

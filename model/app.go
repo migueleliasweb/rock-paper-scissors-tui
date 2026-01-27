@@ -10,6 +10,12 @@ import (
 var (
 	globalStyle = lipgloss.NewStyle().Margin(1, 2)
 
+	gameNameTextStyle = lipgloss.NewStyle().
+				Bold(true).
+				Foreground(lipgloss.Color("#FFF")).
+				Background(lipgloss.Color("#7D56F4")).
+				Padding(1, 2)
+
 	// The style for the active (focused) list
 	focusedStyle = lipgloss.NewStyle().
 			Padding(1, 2).
@@ -102,7 +108,8 @@ func (m *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m *App) View() string {
 	return globalStyle.Render(
 		lipgloss.JoinVertical(
-			lipgloss.Top,
+			lipgloss.Center,
+			gameNameTextStyle.Render("Paper-Scissors Game"),
 			m.activeModel.View(),
 			m.HelpModel.View(),
 		),
