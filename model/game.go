@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	gameSelectionRockItem    = bubble.SimpleItem{TitleItem: "Rock ✊", DescItem: "Rock blunts Sissors"}
-	gameSelectionPaperItem   = bubble.SimpleItem{TitleItem: "Rock ✊", DescItem: "Rock blunts Sissors"}
-	gameSelectionScissorItem = bubble.SimpleItem{TitleItem: "Rock ✊", DescItem: "Rock blunts Sissors"}
+	gameSelectionRockItem    = bubble.SimpleItem{TitleItem: "Rock ✊", DescItem: "Rock blunts Scissors"}
+	gameSelectionPaperItem   = bubble.SimpleItem{TitleItem: "Paper ✋", DescItem: "Paper covers Rock"}
+	gameSelectionScissorItem = bubble.SimpleItem{TitleItem: "Scissors ✌️", DescItem: "Scissors cuts Paper"}
 
 	gameListItems = []list.Item{
 		gameSelectionRockItem,
@@ -38,7 +38,7 @@ type Game struct {
 	config      list.Model
 	leftModel   list.Model
 	centerModel list.Model
-	rightModel  tea.Model
+	rightModel  *Scoreboard
 	focus       focusedState
 	width       int
 	height      int
@@ -53,6 +53,19 @@ func (m *Game) SetGameMode(item list.Item) {
 
 func (m *Game) SetGameRounds(item list.Item) {
 	m.gameRounds = item
+
+	if m.rightModel != nil {
+		if i, ok := item.(bubble.SimpleItem); ok {
+			switch i.TitleItem {
+			case "Best of one":
+				m.rightModel.RoundsLeft = 1
+			case "Best of two":
+				m.rightModel.RoundsLeft = 2
+			case "Best of three":
+				m.rightModel.RoundsLeft = 3
+			}
+		}
+	}
 }
 
 // Init is the first function that will be called. It returns an optional
@@ -103,12 +116,12 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 
-		// Resize each view to fit half the screen each
-		halfWidth := m.width/2 - 4
-		m.leftModel.SetWidth(halfWidth)
+		// Resize each view to fit a third of the screen each
+		thirdWidth := m.width/3 - 4
+		m.leftModel.SetWidth(thirdWidth)
 		m.leftModel.SetHeight(m.height / 2)
 
-		m.centerModel.SetWidth(halfWidth)
+		m.centerModel.SetWidth(thirdWidth)
 		m.centerModel.SetHeight(m.height / 2)
 	}
 
@@ -130,7 +143,7 @@ func (m *Game) View() string {
 
 	leftView := focusedStyle.Render(m.leftModel.View())
 	centerView := noFocusStyle.Render(m.centerModel.View())
-	rightView := noFocusStyle.Render(m.centerModel.View())
+	rightView := noFocusStyle.Render(m.rightModel.View())
 
 	// Sets up horizontal layout ("split view")
 	return lipgloss.JoinHorizontal(
