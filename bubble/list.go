@@ -11,8 +11,8 @@ type ItemWithDeactivation struct {
 	// DescItem Item's description
 	DescItem string
 
-	// Disabled Whether the item should be renderer as `deactivated`
-	Disabled bool
+	// Deactivated Whether the item should be renderer as `deactivated`
+	Deactivated bool
 }
 
 func (i ItemWithDeactivation) Title() string {
@@ -43,6 +43,10 @@ func (i SimpleItem) Description() string { return i.DescItem }
 func (i SimpleItem) FilterValue() string { return i.TitleItem }
 
 var _ list.Item = &SimpleItem{}
+
+func delegateItemWithDeactivation() {
+
+}
 
 // func newItemDelegate() list.DefaultDelegate {
 // 	d := list.NewDefaultDelegate()

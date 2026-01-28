@@ -15,14 +15,14 @@ var (
 	}
 
 	gameModeLocalMultiplayer = bubble.ItemWithDeactivation{
-		TitleItem: "Local Multiplayer (local)",
-		DescItem:  "(soon)",
-		Disabled:  true,
+		TitleItem:   "Local Multiplayer (local)",
+		DescItem:    "(soon)",
+		Deactivated: true,
 	}
 	gameModeMultiplayer = bubble.ItemWithDeactivation{
-		TitleItem: "Multiplayer",
-		DescItem:  "(soon)",
-		Disabled:  true,
+		TitleItem:   "Multiplayer",
+		DescItem:    "(soon)",
+		Deactivated: true,
 	}
 
 	gameModeListItems = []list.Item{
