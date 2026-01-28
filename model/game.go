@@ -143,15 +143,18 @@ func (m *Game) View() string {
 	thirdWidth := m.width/3 - 4
 	halfHeight := m.height / 2
 
+	title := m.leftModel.Styles.Title.Render("NPC")
+	centerBoxHeight := halfHeight - lipgloss.Height(title)
+
 	centerContent := fmt.Sprintf(
 		"%s\n\n%s",
 		m.centerModel.View(),
 		lipgloss.NewStyle().Blink(true).Render("Thinking"),
 	)
 
-	centerBox := lipgloss.NewStyle().Width(thirdWidth).Height(halfHeight).Align(lipgloss.Center, lipgloss.Center).Render(centerContent)
+	centerBox := lipgloss.NewStyle().Width(thirdWidth).Height(centerBoxHeight).Align(lipgloss.Center, lipgloss.Center).Render(centerContent)
 
-	centerView := noFocusStyle.Render(centerBox)
+	centerView := noFocusStyle.Render(lipgloss.JoinVertical(lipgloss.Center, title, centerBox))
 	rightView := noFocusStyle.Render(m.rightModel.View())
 
 	// Sets up horizontal layout ("split view")
