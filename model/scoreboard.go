@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 
+	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -10,7 +11,11 @@ import (
 type Scoreboard struct {
 	Wins       int
 	Losses     int
+	Draws      int
 	RoundsLeft int
+
+	LastPlayer1Selection list.Item
+	LastPlayer2Selection list.Item
 }
 
 // Init is the first function that will be called. It returns an optional

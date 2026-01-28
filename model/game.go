@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"math/rand"
 	"rock-paper-scissors/bubble"
 
 	"github.com/charmbracelet/bubbles/list"
@@ -105,7 +106,6 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		// Handle list.Model selections
 		switch msg.String() {
 		case "tab":
 			if m.focus == focusLeft {
@@ -115,7 +115,20 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case "enter":
 			if m.focus == focusSubmit {
-				// TODO: Handle submit action
+				playerSelection := m.leftModel.SelectedItem().(bubble.SimpleItem)
+				npcSelection := player1ListItems[rand.Intn(len(player1ListItems))].(bubble.SimpleItem)
+
+				if playerSelection.TitleItem == npcSelection.TitleItem {
+					m.rightModel.Draws++
+				} else if (playerSelection.TitleItem == "Rock ✊" && npcSelection.TitleItem == "Scissors ✌️") ||
+					(playerSelection.TitleItem == "Paper ✋" && npcSelection.TitleItem == "Rock ✊") ||
+					(playerSelection.TitleItem == "Scissors ✌️" && npcSelection.TitleItem == "Paper ✋") {
+					m.rightModel.Wins++
+				} else {
+					m.rightModel.Losses++
+				}
+
+				m.rightModel.RoundsLeft--
 			}
 		}
 
