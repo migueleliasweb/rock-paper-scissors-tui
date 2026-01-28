@@ -126,7 +126,7 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Resize each view to fit a third of the screen each
 		thirdWidth := m.width/3 - 4
 		m.leftModel.SetWidth(thirdWidth)
-		m.leftModel.SetHeight(m.height / 2)
+		m.leftModel.SetHeight(m.height/2 - 1)
 	}
 
 	// Update the focused list only
@@ -164,7 +164,7 @@ func (m *Game) View() string {
 	leftView := lipgloss.JoinVertical(lipgloss.Center, leftList, submitButton)
 
 	thirdWidth := m.width/3 - 4
-	halfHeight := m.height / 2
+	halfHeight := m.height/2 - 6
 
 	title := m.leftModel.Styles.Title.Render("NPC")
 	centerBoxHeight := halfHeight - lipgloss.Height(title)
