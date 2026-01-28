@@ -126,7 +126,7 @@ func (m *App) View() string {
 	return globalStyle.Render(
 		lipgloss.JoinVertical(
 			lipgloss.Center,
-			gameNameTextStyle.Render("Paper-Scissors Game"),
+			gameNameTextStyle.Render("Rock-Paper-Scissors Game"),
 			m.activeModel.View(),
 			m.HelpModel.View(),
 		),

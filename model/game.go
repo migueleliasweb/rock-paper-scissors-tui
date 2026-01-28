@@ -20,12 +20,6 @@ var (
 		gameSelectionPaperItem,
 		gameSelectionScissorItem,
 	}
-
-	player2ListItems = []list.Item{
-		gameSelectionRockItem,
-		gameSelectionPaperItem,
-		gameSelectionScissorItem,
-	}
 )
 
 // focusedState tracks which list is currently active
@@ -33,6 +27,7 @@ type focusedState int
 
 const (
 	focusLeft focusedState = iota
+	focusSubmit
 	focusRight
 )
 
@@ -111,6 +106,18 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		// Handle list.Model selections
+		switch msg.String() {
+		case "tab":
+			if m.focus == focusLeft {
+				m.focus = focusSubmit
+			} else {
+				m.focus = focusLeft
+			}
+		case "enter":
+			if m.focus == focusSubmit {
+				// TODO: Handle submit action
+			}
+		}
 
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
@@ -123,8 +130,8 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	// Update the focused list only
-	m.leftModel, cmd = m.leftModel.Update(msg)
 	if m.focus == focusLeft {
+		m.leftModel, cmd = m.leftModel.Update(msg)
 		cmds = append(cmds, cmd)
 	}
 
@@ -144,8 +151,17 @@ func (m *Game) View() string {
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(lipgloss.Color("#505164"))
 
-	leftList := focusedStyle.Render(m.leftModel.View())
-	leftView := lipgloss.JoinVertical(lipgloss.Center, leftList, submitButtonStyle.Render("Submit"))
+	var leftList, submitButton string
+
+	if m.focus == focusLeft {
+		leftList = focusedStyle.Render(m.leftModel.View())
+		submitButton = submitButtonStyle.Render("Submit")
+	} else {
+		leftList = noFocusStyle.Render(m.leftModel.View())
+		submitButton = focusedStyle.MarginTop(1).Render("Submit")
+	}
+
+	leftView := lipgloss.JoinVertical(lipgloss.Center, leftList, submitButton)
 
 	thirdWidth := m.width/3 - 4
 	halfHeight := m.height / 2
