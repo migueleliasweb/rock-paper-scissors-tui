@@ -32,13 +32,13 @@ var (
 	}
 
 	gameRoundsOne   = bubble.SimpleItem{TitleItem: "Best of one", DescItem: "Single round"}
-	gameRoundsTwo   = bubble.SimpleItem{TitleItem: "Best of two", DescItem: "Two rounds"}
 	gameRoundsThree = bubble.SimpleItem{TitleItem: "Best of three", DescItem: "Three rounds"}
+	gameRoundsFive  = bubble.SimpleItem{TitleItem: "Best of five", DescItem: "Five rounds"}
 
 	gameRoundsListItems = []list.Item{
 		gameRoundsOne,
-		gameRoundsTwo,
 		gameRoundsThree,
+		gameRoundsFive,
 	}
 )
 

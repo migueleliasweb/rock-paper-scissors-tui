@@ -56,3 +56,30 @@ func (m *Scoreboard) View() string {
 
 	return s
 }
+
+func (m *Scoreboard) ViewFinal() string {
+	titleStyle := lipgloss.NewStyle().
+		Bold(true).
+		Foreground(lipgloss.Color("#FFF")).
+		Background(lipgloss.Color("#7D56F4")).
+		Padding(1, 2).
+		MarginBottom(1)
+
+	var result string
+	if m.Wins > m.Losses {
+		result = "You Won! 🎉"
+	} else if m.Losses > m.Wins {
+		result = "You Lost! 💀"
+	} else {
+		result = "It's a Draw! 🤝"
+	}
+
+	return lipgloss.JoinVertical(
+		lipgloss.Center,
+		titleStyle.Render("GAME OVER"),
+		lipgloss.NewStyle().MarginBottom(1).Render(result),
+		fmt.Sprintf("Wins: %d", m.Wins),
+		fmt.Sprintf("Losses: %d", m.Losses),
+		fmt.Sprintf("Draws: %d", m.Draws),
+	)
+}

@@ -49,6 +49,7 @@ type Game struct {
 
 	gameMode   list.Item
 	gameRounds list.Item
+	gameOver   bool
 }
 
 func (m *Game) SetGameMode(item list.Item) {
@@ -60,13 +61,13 @@ func (m *Game) SetGameRounds(item list.Item) {
 
 	if m.rightModel != nil {
 		if i, ok := item.(bubble.SimpleItem); ok {
-			switch i.TitleItem {
-			case "Best of one":
+			switch i {
+			case gameRoundsOne:
 				m.rightModel.RoundsLeft = 1
-			case "Best of two":
-				m.rightModel.RoundsLeft = 2
-			case "Best of three":
+			case gameRoundsThree:
 				m.rightModel.RoundsLeft = 3
+			case gameRoundsFive:
+				m.rightModel.RoundsLeft = 5
 			}
 		}
 	}
@@ -95,6 +96,7 @@ func (m *Game) Init() tea.Cmd {
 	m.rightModel = &Scoreboard{}
 
 	m.focus = focusLeft
+	m.gameOver = false
 
 	return m.centerModel.Tick
 }
@@ -107,6 +109,10 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
+		if m.gameOver {
+			return m, nil
+		}
+
 		switch msg.String() {
 		case "tab":
 			if m.focus == focusLeft {
@@ -130,6 +136,10 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 				m.rightModel.RoundsLeft--
+
+				if m.rightModel.RoundsLeft == 0 {
+					m.gameOver = true
+				}
 
 				m.rightModel.LastPlayer1Selection = playerSelection
 				m.rightModel.LastPlayer2Selection = npcSelection
@@ -171,6 +181,10 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // View renders the program's UI, which is just a string. The view is
 // rendered after every Update.
 func (m *Game) View() string {
+	if m.gameOver {
+		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, m.rightModel.ViewFinal())
+	}
+
 	submitButtonStyle := lipgloss.NewStyle().
 		MarginTop(1).
 		Padding(1, 2).
