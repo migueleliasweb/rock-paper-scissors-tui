@@ -75,6 +75,16 @@ func (m *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.windowWidth = msg.Width
 		m.windowHeight = msg.Height
+
+	case RestartGameMsg:
+		m.activeModel = m.WelcomeModel
+		initCmd := m.WelcomeModel.Init()
+		var resizeCmd tea.Cmd
+		m.WelcomeModel, resizeCmd = m.WelcomeModel.Update(tea.WindowSizeMsg{
+			Width:  m.windowWidth,
+			Height: m.windowHeight,
+		})
+		return m, tea.Batch(initCmd, resizeCmd)
 	}
 
 	m.activeModel, cmd = m.activeModel.Update(msg)

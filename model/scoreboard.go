@@ -81,5 +81,6 @@ func (m *Scoreboard) ViewFinal() string {
 		fmt.Sprintf("Wins: %d", m.Wins),
 		fmt.Sprintf("Losses: %d", m.Losses),
 		fmt.Sprintf("Draws: %d", m.Draws),
+		lipgloss.NewStyle().MarginTop(1).Foreground(lipgloss.Color("240")).Render("Press Enter to restart"),
 	)
 }

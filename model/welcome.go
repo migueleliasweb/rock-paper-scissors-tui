@@ -57,6 +57,7 @@ type Welcome struct {
 // initial command. To not perform an initial command return nil.
 func (m *Welcome) Init() (c tea.Cmd) {
 
+	m.focusedIndex = 0
 	m.gameModeListModel = list.New(
 		gameModeListItems,
 		bubble.DelegateItemWithDeactivation(),

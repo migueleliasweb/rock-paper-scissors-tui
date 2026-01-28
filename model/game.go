@@ -33,6 +33,8 @@ const (
 	focusRight
 )
 
+type RestartGameMsg struct{}
+
 type ModelWithModelAndRounds interface {
 	SetGameMode(item list.Item)
 	SetGameRounds(item list.Item)
@@ -110,6 +112,9 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if m.gameOver {
+			if msg.String() == "enter" {
+				return m, func() tea.Msg { return RestartGameMsg{} }
+			}
 			return m, nil
 		}
 
