@@ -59,7 +59,7 @@ func (m *Welcome) Init() (c tea.Cmd) {
 
 	m.gameModeListModel = list.New(
 		gameModeListItems,
-		list.NewDefaultDelegate(),
+		bubble.DelegateItemWithDeactivation(),
 		0,
 		0,
 	)
@@ -94,6 +94,11 @@ func (m *Welcome) Update(msg tea.Msg) (model tea.Model, c tea.Cmd) {
 		switch keypress := msg.String(); keypress {
 		case "enter":
 			if m.focusedIndex == 2 {
+				selectedItem := m.gameModeListModel.SelectedItem()
+				if item, ok := selectedItem.(bubble.ItemWithDeactivation); ok && item.Deactivated {
+					return m, nil
+				}
+
 				m.SelectedGameMode = m.gameModeListModel.SelectedItem()
 				m.SelectedGameRounds = m.gameRoundsListModel.SelectedItem()
 			}
