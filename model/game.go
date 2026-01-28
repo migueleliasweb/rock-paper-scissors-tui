@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"rock-paper-scissors/bubble"
+	"time"
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -129,6 +130,14 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 				m.rightModel.RoundsLeft--
+
+				m.rightModel.LastPlayer1Selection = playerSelection
+				m.rightModel.LastPlayer2Selection = npcSelection
+
+				// Clear selection after 5 seconds
+				cmds = append(cmds, tea.Tick(5*time.Second, func(t time.Time) tea.Msg {
+					return ClearSelectionMsg{}
+				}))
 			}
 		}
 
@@ -151,6 +160,10 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var spinnerCmd tea.Cmd
 	m.centerModel, spinnerCmd = m.centerModel.Update(msg)
 	cmds = append(cmds, spinnerCmd)
+
+	var rightCmd tea.Cmd
+	_, rightCmd = m.rightModel.Update(msg)
+	cmds = append(cmds, rightCmd)
 
 	return m, tea.Batch(cmds...)
 }
