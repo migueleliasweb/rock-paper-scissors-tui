@@ -77,6 +77,9 @@ func (m *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.windowHeight = msg.Height
 	}
 
+	m.activeModel, cmd = m.activeModel.Update(msg)
+	cmds = append(cmds, cmd)
+
 	// Check if whether we just selected a game mode
 	if welcome, ok := m.activeModel.(*Welcome); ok && welcome.SelectedGameMode != nil && welcome.SelectedGameRounds != nil {
 		selectedGameMode, okGameMode := welcome.SelectedGameMode.(bubble.ItemWithDeactivation)
@@ -110,9 +113,6 @@ func (m *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.activeModel = m.GameModel
 		}
 	}
-
-	m.activeModel, cmd = m.activeModel.Update(msg)
-	cmds = append(cmds, cmd)
 
 	m.HelpModel, cmd = m.HelpModel.Update(msg)
 	cmds = append(cmds, cmd)
