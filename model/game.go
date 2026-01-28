@@ -138,7 +138,14 @@ func (m *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // View renders the program's UI, which is just a string. The view is
 // rendered after every Update.
 func (m *Game) View() string {
-	leftView := focusedStyle.Render(m.leftModel.View())
+	submitButtonStyle := lipgloss.NewStyle().
+		MarginTop(1).
+		Padding(1, 2).
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color("#505164"))
+
+	leftList := focusedStyle.Render(m.leftModel.View())
+	leftView := lipgloss.JoinVertical(lipgloss.Center, leftList, submitButtonStyle.Render("Submit"))
 
 	thirdWidth := m.width/3 - 4
 	halfHeight := m.height / 2
